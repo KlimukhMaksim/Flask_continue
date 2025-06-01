@@ -25,5 +25,14 @@
         "category": "lifestyle",
         "author": "user12",
         "is_active": true
+    },
+    {
+        "id": 4,
+        "title": "Test from WEB",
+        "content": "qerqwlkjr",
+        "publish_date": "01.06.2025",
+        "category": "tech",
+        "author": null,
+        "is_active": true
     }
 ]
