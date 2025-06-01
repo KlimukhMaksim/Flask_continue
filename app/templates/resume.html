@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Резюме{% endblock %}
+
+{% block navmenu %}
+<li class="nav-item"><a class="nav-link" href="#about">Про себе</a></li>
+<li class="nav-item"><a class="nav-link" href="#education">Освіта</a></li>
+<li class="nav-item"><a class="nav-link" href="#skills">Навички</a></li>
+<li class="nav-item"><a class="nav-link" href="#experience">Досвід роботи</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Моє резюме</h1>
+
+    <section id="about" class="mb-5 hover_shadow">
+        <div class="card p-3">
+            <div class="card-body">
+                <h2 class="card-title">Про мене</h2>
+                <ul class="list-group-flush">
+                    <li><strong>Ім'я та Прізвище:</strong>Клімух Максим</li>
+                    <li><strong>Вік:</strong> 20 років</li>
+                    <li><strong>Хоббі:</strong>Кулінарія, сноубординг</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="education" class="mb-5 hover_shadow">
+        <div class="card p-3">
+            <div class="card-body">
+                <h2 class="card-title">Освіта</h2>
+                <ul class="list-group-flush">
+                    <li><strong>Середня освіта:</strong> Городенківський ліцей №1</li>
+                    <li><strong>Вища освіта:</strong> КНУ ім. Василя Стефаника, 121 Інженерія програмного забезпечення.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="mb-5 hover_shadow">
+        <div class="card p-3">
+            <div class="card-body">
+                <h2 class="card-title">Навички</h2>
+                <ul class="list-group-flush">    
+                    <li>Програмування мовою Python</li>
+                    <li>Flask</li>
+                    <li>FastAPI</li>
+                    <li>Git</li>
+                    <li>Docker</li>
+                    <li>HTML/CSS/JS</li>
+                    <li>Робота з базами даних PostgreSQL</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="mb-5 hover_shadow">
+        <div class="card p-3">
+            <div class="card-body">
+                <h2 class="card-title">Досвід роботи</h2>
+                <p>Навчальна практика Т.О.В. DieSec</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="photo text-center mb-5">
+        <img src="{{ url_for('static', filename='images/resumeImage.png') }}" alt="Resume Image" width="300px">
+    </section>
+</div>
+
+{% endblock %}
