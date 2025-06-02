@@ -2,24 +2,42 @@ from . import post_bp
 from flask import render_template, abort, flash, url_for, redirect, session, json, request
 from .forms import PostForm
 from .utils import load_posts, save_post, get_post
-from .models import Post
+from .models import Post, Tag
 from app import db
-
+from ..users.models import User
 
 @post_bp.route('/add_post', methods=["GET", "POST"])
 def add_post():
     form = PostForm()
+
+    # отримання списку авторів з бд
+    authors = User.query.all()
+    form.author.choices = [(author.id, author.username) for author in authors]
+
+    tags = Tag.query.all()
+    form.tags.choices = [(tag.id, tag.name) for tag in tags]
+
+
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
-        publish_date = form.publish_date.data.strftime('%d.%m.%Y')
+        posted = form.publish_date.data
         category = form.category.data
         is_active = form.is_active.data
-        author = session.get('username')
-        # обробка логіки
-        new_post = {"id": len(load_posts()) + 1, 'title': title, 'content': content, 'publish_date': publish_date,
-                    'category': category, 'author': author, 'is_active': is_active}
-        save_post(new_post)
+        author_id = form.author.data
+        author = User.query.get(author_id)
+        tags = form.tags.data
+
+        new_post = Post(title=title, content=content, posted=posted, category=category,
+                        is_active=is_active, author=author)
+
+        for t in tags:
+            tag = Tag.query.get(t)
+            new_post.tags.append(tag)
+
+        db.session.add(new_post)
+        db.session.commit()
+
         flash(f"Post {title} added successfully!", "success")
         return redirect(url_for(".get_posts"))
     elif request.method == "POST":
@@ -29,21 +47,29 @@ def add_post():
 
 @post_bp.route('/')
 def get_posts():
-    posts = load_posts()
+    stmt = db.select(Post).order_by(Post.posted.desc())
+    posts = db.session.scalars(stmt).all()
     return render_template("posts.html", posts=posts)
 
 
 @post_bp.route('/<int:id>')
 def detail_post(id):
-    post = get_post(id)
-    if not post:
-        return abort(404)
+    post = db.get_or_404(Post, id)
     return render_template("detail_post.html", post=post)
+
+
+@post_bp.route('/delete/<int:id>', methods=["POST"])
+def delete_post(id):
+    post = db.get_or_404(Post, id)
+    db.session.delete(post)
+    db.session.commit()
+    flash(f"Post '{post.title}' has been deleted successfully!", "success")
+    return redirect(url_for('.get_posts'))
 
 
 @post_bp.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 def edit_post(post_id):
-    post = Post.query.get_or_404(post_id)
+    post = db.get_or_404(Post, post_id)
     form = PostForm(obj=post)
 
     form.publish_date.data = post.posted
@@ -52,6 +78,7 @@ def edit_post(post_id):
         post.title = form.title.data
         post.content = form.content.data
         post.is_active = form.is_active.data
+        # post.author = session.get('username')
         post.category = form.category.data
         db.session.commit()
 
@@ -59,14 +86,3 @@ def edit_post(post_id):
         return redirect(url_for('.get_posts'))
 
     return render_template('add_post.html', form=form)
-
-
-@post_bp.route('/delete/<int:id>', methods=["POST"])
-def delete_post(id):
-    post = Post.query.get_or_404(id)
-    db.session.delete(post)
-    db.session.commit()
-    flash(f"Post '{post.title}' has been deleted successfully!", "success")
-    return redirect(url_for('.get_posts'))
-
-

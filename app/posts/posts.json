@@ -34,5 +34,14 @@
         "category": "tech",
         "author": null,
         "is_active": true
+    },
+    {
+        "id": 5,
+        "title": "final_test",
+        "content": "ohqowpre",
+        "publish_date": "02.06.2025",
+        "category": "tech",
+        "author": null,
+        "is_active": true
     }
 ]

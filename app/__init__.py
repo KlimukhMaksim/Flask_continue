@@ -20,6 +20,7 @@ def create_app(config_name="config"):
         from . import views
 
         from .posts.models import Post
+        from .users.models import User
 
         from .posts import post_bp
         from .users import user_bp
